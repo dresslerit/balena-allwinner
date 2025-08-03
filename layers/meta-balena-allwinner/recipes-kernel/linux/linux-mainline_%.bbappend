@@ -17,6 +17,7 @@ SRC_URI_append = " \
     file://general-add-overlay-compilation-support.patch \
     file://general-sunxi-overlays.patch \
     file://0001-arch-arm-Makefile-Partial-revert-of-https-github.com.patch \
+    file://disable-cpuidle.cfg \
 "
 
 BALENA_CONFIGS_append = " axp_power"
@@ -29,7 +30,7 @@ BALENA_CONFIGS_DEPS[axp_power] = "\
     CONFIG_MFD_AXP20X_I2C=y \
 "
 BALENA_CONFIGS[axp_power] ="\
-    CONFIG_AXP20X_POWER=y \
+    CONFIG_AXP20X_POWER=n \
 "
 
 BALENA_CONFIGS_append_orangepi-plus2 = " wifi"
@@ -37,6 +38,7 @@ BALENA_CONFIGS_append_orange-pi-zero = " wifi"
 BALENA_CONFIGS_append_orange-pi-lite = " wifi"
 BALENA_CONFIGS_append_nanopi-neo-air = " wifi"
 BALENA_CONFIGS_append_bananapi-m1-plus = " wifi"
+BALENA_CONFIGS_append_ty33a-8g1g= " wifi"
 
 BALENA_CONFIGS[wifi] ="\
     CONFIG_WIRELESS=y \
@@ -72,6 +74,10 @@ BALENA_CONFIGS[cp210x] ="\
 "
 
 BALENA_CONFIGS_append_orange-pi-lite = " \
+    8189fs \
+    "
+
+BALENA_CONFIGS_append_ty33a-8g1g = " \
     8189fs \
     "
 

@@ -1,0 +1,4 @@
+#ifdef CONFIG_UART2_BASE
+#undef CONSOLE_DEV
+#define CONSOLE_DEV "ttyS2"
+#endif

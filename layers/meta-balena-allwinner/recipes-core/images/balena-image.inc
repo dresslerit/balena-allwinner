@@ -1,4 +1,25 @@
 #
+# ty33a-8g1g 
+#
+
+IMAGE_FSTYPES_append_ty33a-8g1g = " balenaos-img"
+
+# Customize balenaos-img
+BALENA_IMAGE_BOOTLOADER_ty33a-8g1g= "u-boot"
+BALENA_BOOT_PARTITION_FILES_ty33a-8g1g= " \
+    ${KERNEL_IMAGETYPE}${KERNEL_INITRAMFS}-${MACHINE}.bin:/${KERNEL_IMAGETYPE} \
+    sun8i-a33-ty33a-8g1g.dtb:/dtb/sun8i-a33-ty33a-8g1g.dtb\
+    u-boot-sunxi-with-spl.bin: \
+"
+IMAGE_CMD_balenaos-img_append_ty33a-8g1g() {
+    # ty33a-8g1g needs uboot written at a specific location
+    dd if=${DEPLOY_DIR_IMAGE}/u-boot-sunxi-with-spl.bin of=${BALENA_RAW_IMG} conv=notrunc seek=8 bs=1024
+}
+
+
+
+
+#
 # Orange Pi Plus2
 #
 
