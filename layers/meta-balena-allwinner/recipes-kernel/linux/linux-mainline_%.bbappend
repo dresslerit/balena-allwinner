@@ -77,9 +77,6 @@ BALENA_CONFIGS_append_orange-pi-lite = " \
     8189fs \
     "
 
-BALENA_CONFIGS_append_ty33a-8g1g = " \
-    8189fs \
-    "
 
 BALENA_CONFIGS[8189fs] ?= " \
     CONFIG_RTL8189FS=m \
