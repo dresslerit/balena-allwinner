@@ -1,0 +1,253 @@
+/dts-v1/;
+#include "sun8i-a33.dtsi"
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/pwm/pwm.h>
+
+/ {
+	model = "TY33A 8G1G (Allwinner A33) BL1";
+	compatible = "allwinner,sun8i-a33";
+
+	aliases {
+		serial0 = &uart0;
+		mmc0    = &mmc0;
+		mmc1    = &mmc1;
+		mmc2    = &mmc2;
+	};
+
+	chosen {
+		stdout-path = "serial0:115200n8";
+	};
+
+	r_ccu: clock-controller@1f01400 {
+		compatible   = "allwinner,sun8i-a23-r-ccu";
+		reg          = <0x01f01400 0x100>;
+		clocks       = <&osc24M>;
+		#clock-cells = <1>;
+		#reset-cells = <1>;
+	};
+
+	vcc5v0: vcc5v0 {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc5v0";
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
+		regulator-always-on;
+	};
+
+	wifi_pwrseq: wifi_pwrseq {
+		compatible              = "mmc-pwrseq-simple";
+		reset-gpios             = <&r_pio 0 7 GPIO_ACTIVE_LOW>;
+		post-power-on-delay-ms  = <200>;
+	};
+
+	vcc_lcd: vcc_lcd {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc-lcd";
+		regulator-min-microvolt = <3000000>;
+		regulator-max-microvolt = <3000000>;
+		vin-supply = <&dcdc1>;
+		regulator-always-on;
+	};
+
+	panel_lvds: panel-lvds@0 {
+		compatible = "panel-lvds";
+		power-supply    = <&vcc_lcd>;
+		backlight       = <&backlight>;
+		data-mapping = "jeida-18";
+		width-mm     = <331>;
+		height-mm    = <207>;
+
+		panel-timing {
+			clock-frequency = <72200000>;
+			hactive         = <1280>;
+			vactive         = <800>;
+			hsync-len       = <32>;
+			hfront-porch    = <24>;
+			hback-porch     = <64>;
+			vsync-len       = <6>;
+			vfront-porch    = <3>;
+			vback-porch     = <7>;
+			de-active       = <1>;
+			pixelclk-active = <0>;
+		};
+
+		port {
+			panel_in: endpoint {
+				remote-endpoint = <&tcon0_lvds_out>;
+				allwinner,tcon-channel = <0>;
+			};
+		};
+	};
+
+	backlight: backlight {
+		compatible       = "pwm-backlight";
+		pinctrl-names    = "default";
+		pinctrl-0        = <&pwm0_pins>, <&bl_en_pins>;
+		pwms             = <&pwm 0 50000 0>;
+		enable-gpios     = <&pio 7 1 GPIO_ACTIVE_HIGH>;
+		power-supply     = <&dc1sw>;
+		brightness-levels = <0 4 8 16 32 64 128 192 255>;
+		default-brightness-level = <6>;
+	};
+};
+
+&uart0 { status = "okay"; };
+
+&mmc0 {
+	pinctrl-names = "default";
+	pinctrl-0     = <&mmc0_pins>;
+	vmmc-supply   = <&dcdc1>;
+	vqmmc-supply  = <&dcdc1>;
+	bus-width     = <4>;
+	cd-gpios      = <&pio 1 4 GPIO_ACTIVE_LOW>;
+	cd-inverted;
+	status        = "okay";
+};
+
+&mmc1 {
+	pinctrl-names = "default";
+	pinctrl-0     = <&mmc1_pg_pins>;
+	vmmc-supply   = <&dldo1>;
+	vqmmc-supply  = <&aldo1>;
+	mmc-pwrseq    = <&wifi_pwrseq>;
+	bus-width     = <4>;
+	non-removable;
+	cap-sdio-irq;
+	keep-power-in-suspend;
+	status        = "okay";
+};
+
+&mmc2 {
+	pinctrl-names = "default";
+	pinctrl-0     = <&mmc2_8bit_pins>;
+	vmmc-supply   = <&dcdc1>;
+	vqmmc-supply  = <&dcdc1>;
+	bus-width     = <8>;
+	non-removable;
+	cap-mmc-hw-reset;
+	status        = "okay";
+};
+
+&usb_otg { dr_mode = "peripheral"; status = "okay"; };
+&usbphy  { status  = "okay"; usb1_vbus-supply = <&vcc5v0>; };
+
+&r_pio { status = "okay"; };
+
+&pio {
+	status = "okay";
+
+	vcc-pa-supply = <&dcdc1>;
+	vcc-pb-supply = <&dcdc1>;
+	vcc-pc-supply = <&dcdc1>;
+	vcc-pd-supply = <&dcdc1>;
+	vcc-pe-supply = <&dcdc1>;
+	vcc-pf-supply = <&dcdc1>;
+	vcc-pg-supply = <&aldo1>;
+	vcc-ph-supply = <&aldo1>;
+
+	pwm0_pins: pwm0_pins {
+		pins            = "PH0";
+		function        = "pwm0";
+	};
+
+	bl_en_pins: bl_en_pins {
+		pins            = "PH1";
+		function        = "gpio_out";
+	};
+};
+
+&r_rsb {
+	status = "okay";
+	axp223: pmic@3a3 {
+		compatible = "x-powers,axp223";
+		reg = <0x3a3>;
+		interrupt-parent = <&nmi_intc>;
+		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
+
+		vin-supply = <&vcc5v0>;
+
+		regulators {
+			dcdc1: dcdc1 {
+				regulator-name = "vcc-3v0";
+				regulator-min-microvolt = <3000000>;
+				regulator-max-microvolt = <3000000>;
+				regulator-always-on;
+			};
+			dcdc2: dcdc2 {
+				regulator-name = "vdd-sys";
+				regulator-min-microvolt = <1100000>;
+				regulator-max-microvolt = <1100000>;
+				regulator-always-on;
+			};
+			dcdc3: dcdc3 {
+				regulator-name = "vdd-cpu";
+				regulator-min-microvolt = <1320000>;
+				regulator-max-microvolt = <1320000>;
+				regulator-always-on;
+			};
+			dcdc5: dcdc5 {
+				regulator-name = "vcc-dram";
+				regulator-min-microvolt = <1500000>;
+				regulator-max-microvolt = <1500000>;
+				regulator-always-on;
+			};
+			dc1sw: dc1sw {
+				regulator-name = "vcc-bl";
+				vin-supply = <&vcc5v0>;
+				regulator-always-on;
+			};
+			dc5ldo: dc5ldo {
+				regulator-name = "vdd-cpus";
+				regulator-always-on;
+			};
+			aldo1: aldo1 {
+				regulator-name = "vcc-wifi-io";
+				regulator-min-microvolt = <3300000>;
+				regulator-max-microvolt = <3300000>;
+				regulator-always-on;
+			};
+			aldo2: aldo2 {
+				regulator-name = "vcc-2v5";
+				regulator-min-microvolt = <2500000>;
+				regulator-max-microvolt = <2500000>;
+				regulator-always-on;
+			};
+			aldo3: aldo3 {
+				regulator-name = "vcc-pll-avcc";
+				regulator-always-on;
+			};
+			dldo1: dldo1 {
+				regulator-name = "vcc-wifi-3v3";
+				regulator-min-microvolt = <3300000>;
+				regulator-max-microvolt = <3300000>;
+			};
+			dldo2: dldo2 {
+				regulator-name = "vcc-other-3v3";
+				regulator-min-microvolt = <3300000>;
+				regulator-max-microvolt = <3300000>;
+			};
+		};
+	};
+};
+
+&be0  { status = "okay"; };
+&drc0 { status = "okay"; };
+&fe0  { status = "okay"; };
+&pwm  { status = "okay"; };
+
+&tcon0 {
+	status          = "okay";
+	vdd-lcd-supply  = <&vcc_lcd>;
+
+	port@1 {
+		reg = <1>;
+		tcon0_lvds_out: endpoint {
+			reg = <0>;
+			remote-endpoint        = <&panel_in>;
+			allwinner,tcon-channel = <0>;
+		};
+	};
+};
+
+&sound { status = "okay"; };
+&ths   { status = "okay"; };

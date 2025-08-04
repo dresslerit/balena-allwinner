@@ -12,6 +12,11 @@ SRC_URI_append_nanopi-neo-air = " \
     file://nanopi-neo-air/board-nanopiair-h3-camera-wifi-bluetooth-otg.patch \
 "
 
+SRC_URI_append_ty33a-8g1g = " \
+    file://ty33a-8g1g/defconfig \
+    file://ty33a-8g1g/sun8i-a33-ty33a-8g1g.dts \
+"
+
 SRC_URI_append = " \
     file://general-add-configfs-overlay.patch \
     file://general-add-overlay-compilation-support.patch \
@@ -30,7 +35,7 @@ BALENA_CONFIGS_DEPS[axp_power] = "\
     CONFIG_MFD_AXP20X_I2C=y \
 "
 BALENA_CONFIGS[axp_power] ="\
-    CONFIG_AXP20X_POWER=n \
+    CONFIG_AXP20X_POWER=y \
 "
 
 BALENA_CONFIGS_append_orangepi-plus2 = " wifi"
@@ -126,3 +131,12 @@ KERNEL_DEVICETREE_orange-pi-zero_append = " \
     overlay/sun8i-h3-usbhost3.dtbo \
     overlay/sun8i-h3-w1-gpio.dtbo \
     "
+
+do_configure_prepend_ty33a-8g1g() {
+    if [ -f ${WORKDIR}/defconfig ]; then
+        cp ${WORKDIR}/defconfig ${S}/arch/arm/configs/ty33a-8g1g_defconfig
+    fi
+    if [ -f ${WORKDIR}/sun8i-a33-ty33a-8g1g.dts ]; then
+        cp ${WORKDIR}/sun8i-a33-ty33a-8g1g.dts ${S}/arch/arm/boot/dts/
+    fi
+}

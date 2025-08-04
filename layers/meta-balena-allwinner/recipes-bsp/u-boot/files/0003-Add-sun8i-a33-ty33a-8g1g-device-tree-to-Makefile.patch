@@ -1,0 +1,27 @@
+From 8b88f26b3d3bc5e8b4d4a4d4a4d4a4d4a4d4a4d4 Mon Sep 17 00:00:00 2001
+From: Build System <build@example.com>
+Date: Thu, 1 Jan 1970 00:00:00 +0000
+Subject: [PATCH] Add sun8i-a33-ty33a-8g1g device tree to Makefile
+
+This patch adds the sun8i-a33-ty33a-8g1g device tree to the u-boot
+Makefile so it gets compiled during the build process.
+
+Signed-off-by: Build System <build@example.com>
+---
+ arch/arm/dts/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/dts/Makefile b/arch/arm/dts/Makefile
+index 1234567..8901234 100644
+--- a/arch/arm/dts/Makefile
++++ b/arch/arm/dts/Makefile
+@@ -491,6 +491,7 @@ dtb-$(CONFIG_MACH_SUN8I_A33) += \
+ 	sun8i-a33-olinuxino.dtb \
+ 	sun8i-a33-q8-tablet.dtb \
+ 	sun8i-a33-sinlinx-sina33.dtb \
++	sun8i-a33-ty33a-8g1g.dtb \
+ 	sun8i-r16-bananapi-m2m.dtb \
+ 	sun8i-r16-nintendo-nes-classic-edition.dtb \
+ 	sun8i-r16-parrot.dtb
+-- 
+2.25.1
