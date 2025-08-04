@@ -13,6 +13,11 @@ uboot_seek_blocks=8
 
 device="/dev/"$(findmnt --noheadings --canonicalize --output SOURCE /mnt/boot/ | xargs lsblk -no pkname)
 
+# For eMMC devices, we need to write to the boot partition, not the main device
+if [ -e "${device}boot0" ]; then
+    device="${device}boot0"
+fi
+
 update_files="uboot"
 
 for i in $update_files; do
