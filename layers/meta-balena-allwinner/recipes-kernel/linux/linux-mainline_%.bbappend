@@ -22,7 +22,6 @@ SRC_URI_append = " \
     file://general-add-overlay-compilation-support.patch \
     file://general-sunxi-overlays.patch \
     file://0001-arch-arm-Makefile-Partial-revert-of-https-github.com.patch \
-    file://disable-cpuidle.cfg \
 "
 
 BALENA_CONFIGS_append = " axp_power"
@@ -44,6 +43,11 @@ BALENA_CONFIGS_append_orange-pi-lite = " wifi"
 BALENA_CONFIGS_append_nanopi-neo-air = " wifi"
 BALENA_CONFIGS_append_bananapi-m1-plus = " wifi"
 BALENA_CONFIGS_append_ty33a-8g1g= " wifi"
+
+
+
+
+KERNEL_DEVICETREE_ty33a-8g1g = "sun8i-a33-ty33a-8g1g.dtb"
 
 BALENA_CONFIGS[wifi] ="\
     CONFIG_WIRELESS=y \
@@ -132,11 +136,19 @@ KERNEL_DEVICETREE_orange-pi-zero_append = " \
     overlay/sun8i-h3-w1-gpio.dtbo \
     "
 
-do_configure_prepend_ty33a-8g1g() {
-    if [ -f ${WORKDIR}/defconfig ]; then
-        cp ${WORKDIR}/defconfig ${S}/arch/arm/configs/ty33a-8g1g_defconfig
-    fi
-    if [ -f ${WORKDIR}/sun8i-a33-ty33a-8g1g.dts ]; then
-        cp ${WORKDIR}/sun8i-a33-ty33a-8g1g.dts ${S}/arch/arm/boot/dts/
+do_configure:prepend:ty33a-8g1g() {
+    # 1. Put the defconfig where the kernel expects it
+    install -m0644  ${WORKDIR}/ty33a-8g1g/defconfig \
+        ${S}/arch/arm/configs/ty33a_8g1g_defconfig
+
+    # 2. Drop the board dts into the dts directory
+    install -m0644  ${WORKDIR}/ty33a-8g1g/sun8i-a33-ty33a-8g1g.dts \
+        ${S}/arch/arm/boot/dts/
+
+    # 3. Register the dtb once—no duplicate targets
+    if ! grep -q "sun8i-a33-ty33a-8g1g.dtb" \
+        ${S}/arch/arm/boot/dts/Makefile; then
+        sed -i '/dtb-\$(CONFIG_MACH_SUN8I)/a\	sun8i-a33-ty33a-8g1g.dtb \\' ${S}/arch/arm/boot/dts/Makefile
     fi
 }
+

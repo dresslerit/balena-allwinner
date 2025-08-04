@@ -4,7 +4,7 @@
 #include <dt-bindings/pwm/pwm.h>
 
 / {
-	model = "TY33A 8G1G (Allwinner A33) BL1";
+	model = "TY33A 8G1G (Allwinner A33) NDB";
 	compatible = "allwinner,sun8i-a33";
 
 	aliases {
