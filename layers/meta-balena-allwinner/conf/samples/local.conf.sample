@@ -1,19 +1,20 @@
 # Supported machines
-#MACHINE ?= "orange-pi-lite"
-#MACHINE ?= "nanopi-neo-air"
-#MACHINE ?= "ty33a-8g1g"
+MACHINE ?= "orange-pi-lite"
+MACHINE ?= "nanopi-neo-air"
+MACHINE ?= "ty33a-8g1g"
 
+# We use the overlayfs docker storage driver
+BALENA_STORAGE = "overlay2"
 
 # More info meta-resin/README.md
 #TARGET_REPOSITORY ?= ""
 #TARGET_TAG ?= ""
-BALENA_STORAGE = "overlay2"
 
 # Set this to 1 to disable quiet boot and allow bootloader shell access
 #OS_DEVELOPMENT = "1"
 
 # Set this to make build system generate resinhup bundles
-#RESINHUP ?= "yes"
+#BALENAHUP ?= "yes"
 
 # Set this to change the supervisor tag used
 #SUPERVISOR_TAG ?= "master"
@@ -37,13 +38,13 @@ DISTRO ?= "resin-systemd"
 # Inheriting this class has shown to speed up builds due to significantly lower
 # amounts of data stored in the data cache as well as on disk.
 # http://www.yoctoproject.org/docs/latest/mega-manual/mega-manual.html#ref-classes-rm-work
-#INHERIT += "rm_work"
+INHERIT += "rm_work"
 
 # Remove the old image before the new one is generated to save disk space when RM_OLD_IMAGE is set to 1, this is an easy way to keep the DEPLOY_DIR_IMAGE clean.
 RM_OLD_IMAGE = "1"
 
 # Additional image features
-USER_CLASSES ?= "buildstats image-mklibs image-prelink"
+USER_CLASSES ?= "buildstats"
 
 # By default disable interactive patch resolution (tasks will just fail instead):
 PATCHRESOLVE = "noop"
@@ -57,6 +58,9 @@ BB_DISKMON_DIRS = "\
     ABORT,${DL_DIR},100M,1K \
     ABORT,${SSTATE_DIR},100M,1K"
 
-CONF_VERSION = "1"
+CONF_VERSION = "2"
 
+# Allow use of host docker from recipes
 HOSTTOOLS += "docker iptables"
+
+ACCEPT_FSL_EULA = "1"

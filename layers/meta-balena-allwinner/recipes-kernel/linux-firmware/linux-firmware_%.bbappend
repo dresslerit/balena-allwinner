@@ -1,7 +1,7 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 # These firmware files are fetched from https://github.com/armbian/build/tree/master/packages/extras/firmware/brcm
-SRC_URI_append = " \
+SRC_URI:append = " \
     file://bcm4329.hcd \
     file://bcm4330.hcd \
     file://bcm43438-sdio.hcd \
@@ -14,7 +14,7 @@ SRC_URI_append = " \
     file://brcmfmac43362-sdio.txt \
     "
 
-do_install_append() {
+do_install:append() {
     cp ${WORKDIR}/bcm4329.hcd ${D}/${nonarch_base_libdir}/firmware/brcm/bcm4329.hcd
     cp ${WORKDIR}/bcm4330.hcd ${D}/${nonarch_base_libdir}/firmware/brcm/bcm4330.hcd
     cp ${WORKDIR}/bcm43438-sdio.hcd ${D}/${nonarch_base_libdir}/firmware/brcm/bcm43438-sdio.hcd
@@ -24,7 +24,7 @@ do_install_append() {
     cp ${WORKDIR}/brcmfmac43362-sdio.txt ${D}/${nonarch_base_libdir}/firmware/brcm/brcmfmac43362-sdio.txt
 }
 
-do_install_append_nanopi-neo-air() {
+do_install:append:nanopi-neo-air() {
     mkdir -p ${D}/${nonarch_base_libdir}/firmware/brcm
     install -m 0644 ${WORKDIR}/brcmfmac43430-sdio.txt ${D}${nonarch_base_libdir}/firmware/brcm
     install -m 0644 ${WORKDIR}/bcm43438a0.hcd ${D}${nonarch_base_libdir}/firmware/brcm
@@ -44,6 +44,6 @@ FILES_${PN}-ap6212 = " \
   ${nonarch_base_libdir}/firmware/brcm/bcm43438a1.hcd \
 "
 
-FILES_${PN}-bcm43430_append_nanopi-neo-air = " \
+FILES_${PN}-bcm43430:append:nanopi-neo-air = " \
     ${nonarch_base_libdir}/firmware/brcm/brcmfmac43430-sdio.txt \
 "
