@@ -2,7 +2,7 @@
 # ty33a-8g1g 
 #
 
-IMAGE_FSTYPES_append_ty33a-8g1g = " balenaos-img"
+IMAGE_FSTYPES:append:ty33a-8g1g = " balenaos-img"
 
 # Customize balenaos-img
 BALENA_IMAGE_BOOTLOADER_ty33a-8g1g= "u-boot"
@@ -11,7 +11,7 @@ BALENA_BOOT_PARTITION_FILES_ty33a-8g1g= " \
     sun8i-a33-ty33a-8g1g.dtb:/dtb/sun8i-a33-ty33a-8g1g.dtb\
     u-boot-sunxi-with-spl.bin: \
 "
-IMAGE_CMD_balenaos-img_append_ty33a-8g1g() {
+IMAGE_CMD_balenaos-img:append:ty33a-8g1g() {
     # ty33a-8g1g needs uboot written at a specific location
     dd if=${DEPLOY_DIR_IMAGE}/u-boot-sunxi-with-spl.bin of=${BALENA_RAW_IMG} conv=notrunc seek=8 bs=1024
 }
@@ -23,7 +23,7 @@ IMAGE_CMD_balenaos-img_append_ty33a-8g1g() {
 # Orange Pi Plus2
 #
 
-IMAGE_FSTYPES_append_orangepi-plus2 = " balenaos-img"
+IMAGE_FSTYPES:append:orangepi-plus2 = " balenaos-img"
 
 # Customize balenaos-img
 BALENA_IMAGE_BOOTLOADER_orangepi-plus2 = "u-boot"
@@ -32,7 +32,7 @@ BALENA_BOOT_PARTITION_FILES_orangepi-plus2 = " \
     sun8i-h3-orangepi-plus.dtb:/dtb/sun8i-h3-orangepi-plus.dtb \
     u-boot-sunxi-with-spl.bin: \
 "
-IMAGE_CMD_balenaos-img_append_orangepi-plus2 () {
+IMAGE_CMD_balenaos-img:append:orangepi-plus2 () {
     # Orange Pi Plus2 needs uboot written at a specific location
     dd if=${DEPLOY_DIR_IMAGE}/u-boot-sunxi-with-spl.bin of=${BALENA_RAW_IMG} conv=notrunc seek=8 bs=1024
 }
@@ -41,7 +41,7 @@ IMAGE_CMD_balenaos-img_append_orangepi-plus2 () {
 # Orange Pi One
 #
 
-IMAGE_FSTYPES_append_orange-pi-one = " balenaos-img"
+IMAGE_FSTYPES:append:orange-pi-one = " balenaos-img"
 
 # Customize balenaos-img
 BALENA_IMAGE_BOOTLOADER_orange-pi-one = "u-boot"
@@ -50,7 +50,7 @@ BALENA_BOOT_PARTITION_FILES_orange-pi-one = " \
     sun8i-h3-orangepi-one.dtb:/dtb/sun8i-h3-orangepi-one.dtb \
     u-boot-sunxi-with-spl.bin: \
 "
-IMAGE_CMD_balenaos-img_append_orange-pi-one () {
+IMAGE_CMD_balenaos-img:append:orange-pi-one () {
     # Orange Pi One needs uboot written at a specific location
     dd if=${DEPLOY_DIR_IMAGE}/u-boot-sunxi-with-spl.bin of=${BALENA_RAW_IMG} conv=notrunc seek=8 bs=1024
 }
@@ -60,7 +60,7 @@ IMAGE_CMD_balenaos-img_append_orange-pi-one () {
 # bananapi-M1+
 #
 
-IMAGE_FSTYPES_append_bananapi-m1-plus = " balenaos-img"
+IMAGE_FSTYPES:append:bananapi-m1-plus = " balenaos-img"
 
 # Customize balenaos-img
 BALENA_IMAGE_BOOTLOADER_bananapi-m1-plus = "u-boot"
@@ -69,7 +69,7 @@ BALENA_BOOT_PARTITION_FILES_bananapi-m1-plus = " \
     sun7i-a20-bananapi-m1-plus.dtb:/dtb/sun7i-a20-bananapi-m1-plus.dtb\
     u-boot-sunxi-with-spl.bin: \
 "
-IMAGE_CMD_balenaos-img_append_bananapi-m1-plus () {
+IMAGE_CMD_balenaos-img:append:bananapi-m1-plus () {
     # bananapi-M1+ needs uboot written at a specific location
     dd if=${DEPLOY_DIR_IMAGE}/u-boot-sunxi-with-spl.bin of=${BALENA_RAW_IMG} conv=notrunc seek=8 bs=1024
 }
@@ -78,7 +78,7 @@ IMAGE_CMD_balenaos-img_append_bananapi-m1-plus () {
 # orange-pi-lite
 #
 
-IMAGE_FSTYPES_append_orange-pi-lite = " balenaos-img"
+IMAGE_FSTYPES:append:orange-pi-lite = " balenaos-img"
 
 # Customize balenaos-img
 BALENA_IMAGE_BOOTLOADER_orange-pi-lite = "u-boot"
@@ -107,7 +107,7 @@ BALENA_BOOT_PARTITION_FILES_orange-pi-lite = " \
     boot.scr:/boot.scr \
     "
 
-IMAGE_CMD_balenaos-img_append_orange-pi-lite () {
+IMAGE_CMD_balenaos-img:append:orange-pi-lite () {
     # orange-pi-lite needs uboot written at a specific location
     dd if=${DEPLOY_DIR_IMAGE}/u-boot-sunxi-with-spl.bin of=${BALENA_RAW_IMG} conv=notrunc seek=8 bs=1024
 }
@@ -117,7 +117,7 @@ IMAGE_CMD_balenaos-img_append_orange-pi-lite () {
 # Orange Pi Zero
 #
 
-IMAGE_FSTYPES_append_orange-pi-zero = " balenaos-img"
+IMAGE_FSTYPES:append:orange-pi-zero = " balenaos-img"
 
 #Customize balenaos-img
 BALENA_IMAGE_BOOTLOADER_orange-pi-zero = "u-boot"
@@ -146,7 +146,7 @@ BALENA_BOOT_PARTITION_FILES_orange-pi-zero = " \
     boot.scr:/boot.scr \
     u-boot-sunxi-with-spl.bin: \
 "
-IMAGE_CMD_balenaos-img_append_orange-pi-zero () {
+IMAGE_CMD_balenaos-img:append:orange-pi-zero () {
     # Orange Pi Zero needs uboot written at a specific location
     dd if=${DEPLOY_DIR_IMAGE}/u-boot-sunxi-with-spl.bin of=${BALENA_RAW_IMG} conv=notrunc seek=8 bs=1024
 }
@@ -155,7 +155,7 @@ IMAGE_CMD_balenaos-img_append_orange-pi-zero () {
 # nanopi-neo-air
 #
 
-IMAGE_FSTYPES_append_nanopi-neo-air = " balenaos-img"
+IMAGE_FSTYPES:append:nanopi-neo-air = " balenaos-img"
 
 # Customize balenaos-img
 BALENA_IMAGE_BOOTLOADER_nanopi-neo-air = "u-boot"
@@ -166,7 +166,7 @@ BALENA_BOOT_PARTITION_FILES_nanopi-neo-air = " \
     boot.scr:/boot.scr \
     "
 
-IMAGE_CMD_balenaos-img_append_nanopi-neo-air () {
+IMAGE_CMD_balenaos-img:append:nanopi-neo-air () {
     # nanopi-neo-air needs uboot written at a specific location
     dd if=${DEPLOY_DIR_IMAGE}/u-boot-sunxi-with-spl.bin of=${BALENA_RAW_IMG} conv=notrunc seek=8 bs=1024
 }
