@@ -1,4 +1,5 @@
-CONNECTIVITY_FIRMWARES:append = " linux-firmware-ap6212 linux-firmware-bcm43362"
+CONNECTIVITY_FIRMWARES:append:bananapi-m1-plus = " linux-firmware-ap6212"
+CONNECTIVITY_FIRMWARES:append = " linux-firmware-bcm43362"
 CONNECTIVITY_MODULES:append:orangepi-plus2 = " rtl8189"
 
 CONNECTIVITY_MODULES:append:orange-pi-zero = " xradio"

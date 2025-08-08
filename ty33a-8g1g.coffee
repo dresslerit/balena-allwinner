@@ -35,7 +35,7 @@ module.exports =
 	yocto:
 		machine: 'ty33a-8g1g'
 		#no flasher for testing
-		image: 'balena-image-flasher'
+		image: 'balena-image'
 		fstype: 'balenaos-img'
 		version: 'yocto-kirkstone'
 		deployArtifact: 'balena-image-ty33a-8g1g.balenaos-img'

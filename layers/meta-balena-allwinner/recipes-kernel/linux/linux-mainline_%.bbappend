@@ -17,12 +17,6 @@ SRC_URI:append:ty33a-8g1g = " \
     file://ty33a-8g1g/sun8i-a33-ty33a-8g1g.dts \
 "
 
-SRC_URI:append = " \
-    file://general-add-configfs-overlay.patch \
-    file://general-add-overlay-compilation-support.patch \
-    file://general-sunxi-overlays.patch \
-    file://0001-arch-arm-Makefile-Partial-revert-of-https-github.com.patch \
-"
 
 BALENA_CONFIGS:append = " axp_power"
 BALENA_CONFIGS_DEPS[axp_power] = "\

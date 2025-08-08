@@ -5,13 +5,13 @@
 IMAGE_FSTYPES:append:ty33a-8g1g = " balenaos-img"
 
 # Customize balenaos-img
-BALENA_IMAGE_BOOTLOADER_ty33a-8g1g= "u-boot"
-BALENA_BOOT_PARTITION_FILES_ty33a-8g1g= " \
-    ${KERNEL_IMAGETYPE}${KERNEL_INITRAMFS}-${MACHINE}.bin:/${KERNEL_IMAGETYPE} \
-    sun8i-a33-ty33a-8g1g.dtb:/dtb/sun8i-a33-ty33a-8g1g.dtb\
+BALENA_IMAGE_BOOTLOADER:ty33a-8g1g= "u-boot"
+BALENA_BOOT_PARTITION_FILES:ty33a-8g1g = " \
+    ${KERNEL_IMAGETYPE}:/${KERNEL_IMAGETYPE} \
+    ${KERNEL_DEVICETREE}:/dtb/${KERNEL_DEVICETREE} \
     u-boot-sunxi-with-spl.bin: \
 "
-IMAGE_CMD_balenaos-img:append:ty33a-8g1g() {
+IMAGE_CMD_balenaos-img:ty33a-8g1g() {
     # ty33a-8g1g needs uboot written at a specific location
     dd if=${DEPLOY_DIR_IMAGE}/u-boot-sunxi-with-spl.bin of=${BALENA_RAW_IMG} conv=notrunc seek=8 bs=1024
 }
@@ -26,8 +26,8 @@ IMAGE_CMD_balenaos-img:append:ty33a-8g1g() {
 IMAGE_FSTYPES:append:orangepi-plus2 = " balenaos-img"
 
 # Customize balenaos-img
-BALENA_IMAGE_BOOTLOADER_orangepi-plus2 = "u-boot"
-BALENA_BOOT_PARTITION_FILES_orangepi-plus2 = " \
+BALENA_IMAGE_BOOTLOADER:orangepi-plus2 = "u-boot"
+BALENA_BOOT_PARTITION_FILES:orangepi-plus2 = " \
     ${KERNEL_IMAGETYPE}${KERNEL_INITRAMFS}-${MACHINE}.bin:/${KERNEL_IMAGETYPE} \
     sun8i-h3-orangepi-plus.dtb:/dtb/sun8i-h3-orangepi-plus.dtb \
     u-boot-sunxi-with-spl.bin: \
@@ -44,8 +44,8 @@ IMAGE_CMD_balenaos-img:append:orangepi-plus2 () {
 IMAGE_FSTYPES:append:orange-pi-one = " balenaos-img"
 
 # Customize balenaos-img
-BALENA_IMAGE_BOOTLOADER_orange-pi-one = "u-boot"
-BALENA_BOOT_PARTITION_FILES_orange-pi-one = " \
+BALENA_IMAGE_BOOTLOADER:orange-pi-one = "u-boot"
+BALENA_BOOT_PARTITION_FILES:orange-pi-one = " \
     ${KERNEL_IMAGETYPE}${KERNEL_INITRAMFS}-${MACHINE}.bin:/${KERNEL_IMAGETYPE} \
     sun8i-h3-orangepi-one.dtb:/dtb/sun8i-h3-orangepi-one.dtb \
     u-boot-sunxi-with-spl.bin: \
@@ -63,8 +63,8 @@ IMAGE_CMD_balenaos-img:append:orange-pi-one () {
 IMAGE_FSTYPES:append:bananapi-m1-plus = " balenaos-img"
 
 # Customize balenaos-img
-BALENA_IMAGE_BOOTLOADER_bananapi-m1-plus = "u-boot"
-BALENA_BOOT_PARTITION_FILES_bananapi-m1-plus = " \
+BALENA_IMAGE_BOOTLOADER:bananapi-m1-plus = "u-boot"
+BALENA_BOOT_PARTITION_FILES:bananapi-m1-plus = " \
     ${KERNEL_IMAGETYPE}${KERNEL_INITRAMFS}-${MACHINE}.bin:/${KERNEL_IMAGETYPE} \
     sun7i-a20-bananapi-m1-plus.dtb:/dtb/sun7i-a20-bananapi-m1-plus.dtb\
     u-boot-sunxi-with-spl.bin: \
@@ -81,8 +81,8 @@ IMAGE_CMD_balenaos-img:append:bananapi-m1-plus () {
 IMAGE_FSTYPES:append:orange-pi-lite = " balenaos-img"
 
 # Customize balenaos-img
-BALENA_IMAGE_BOOTLOADER_orange-pi-lite = "u-boot"
-BALENA_BOOT_PARTITION_FILES_orange-pi-lite = " \
+BALENA_IMAGE_BOOTLOADER:orange-pi-lite = "u-boot"
+BALENA_BOOT_PARTITION_FILES:orange-pi-lite = " \
     ${KERNEL_IMAGETYPE}${KERNEL_INITRAMFS}-${MACHINE}.bin:/${KERNEL_IMAGETYPE} \
     sun8i-h3-orangepi-lite.dtb:/dtb/sun8i-h3-orangepi-lite.dtb \
     sun8i-h3-fixup.scr:/dtb/overlay/sun8i-h3-fixup.scr \
@@ -120,8 +120,8 @@ IMAGE_CMD_balenaos-img:append:orange-pi-lite () {
 IMAGE_FSTYPES:append:orange-pi-zero = " balenaos-img"
 
 #Customize balenaos-img
-BALENA_IMAGE_BOOTLOADER_orange-pi-zero = "u-boot"
-BALENA_BOOT_PARTITION_FILES_orange-pi-zero = " \
+BALENA_IMAGE_BOOTLOADER:orange-pi-zero = "u-boot"
+BALENA_BOOT_PARTITION_FILES:orange-pi-zero = " \
     ${KERNEL_IMAGETYPE}${KERNEL_INITRAMFS}-${MACHINE}.bin:/${KERNEL_IMAGETYPE} \
     sun8i-h2-plus-orangepi-zero.dtb:/dtb/sun8i-h2-plus-orangepi-zero.dtb \
     sun8i-h3-fixup.scr:/dtb/overlay/sun8i-h3-fixup.scr \
@@ -158,8 +158,8 @@ IMAGE_CMD_balenaos-img:append:orange-pi-zero () {
 IMAGE_FSTYPES:append:nanopi-neo-air = " balenaos-img"
 
 # Customize balenaos-img
-BALENA_IMAGE_BOOTLOADER_nanopi-neo-air = "u-boot"
-BALENA_BOOT_PARTITION_FILES_nanopi-neo-air = " \
+BALENA_IMAGE_BOOTLOADER:nanopi-neo-air = "u-boot"
+BALENA_BOOT_PARTITION_FILES:nanopi-neo-air = " \
     ${KERNEL_IMAGETYPE}${KERNEL_INITRAMFS}-${MACHINE}.bin:/${KERNEL_IMAGETYPE} \
     sun8i-h3-nanopi-neo-air.dtb:/dtb/sun8i-h3-nanopi-neo-air.dtb \
     u-boot-sunxi-with-spl.bin: \
