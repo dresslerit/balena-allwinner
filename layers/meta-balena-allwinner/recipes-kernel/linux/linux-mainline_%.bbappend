@@ -15,8 +15,39 @@ SRC_URI:append:nanopi-neo-air = " \
 SRC_URI:append:ty33a-8g1g = " \
     file://ty33a-8g1g/defconfig \
     file://ty33a-8g1g/sun8i-a33-ty33a-8g1g.dts \
+    file://wireless-rtl8723cs/8723cs-Add-a-new-driver-v5.12.2-7-g2de5ec386.20201013_beta.patch \
+    file://wireless-rtl8723cs/8723cs-Make-the-driver-compile-and-probe-drop-rockchip-platform.patch \
+    file://wireless-rtl8723cs/8723cs-Enable-OOB-interrupt.patch \
+    file://wireless-rtl8723cs/8723cs-Load-the-MAC-address-from-local-mac-address.patch \
+    file://wireless-rtl8723cs/8723cs-Modify-makefile-options-to-better-suit-PinePhone-Allwinn.patch \
+    file://wireless-rtl8723cs/8723cs-Enable-monitor-mode.patch \
+    file://wireless-rtl8723cs/8723cs-Disable-power-saving.patch \
+    file://wireless-rtl8723cs/8723cs-aes_encrypt-aes_encrypt_128-to-avoid-symbol-name-conflic.patch \
+    file://wireless-rtl8723cs/8723cs-Enable-wifi-power-saving-mode.patch \
+    file://wireless-rtl8723cs/8723cs-Enable-TDLS-802.11z-support-direct-sta-sta-connection.patch \
+    file://wireless-rtl8723cs/8723cs-Disable-CONFIG_CONCURRENT_MODE.patch \
+    file://wireless-rtl8723cs/8723cs-Set-CONFIG_RTW_SDIO_PM_KEEP_POWER-n-to-fix-suspend-38.patch \
+    file://wireless-rtl8723cs/8723cs-Resume-wifi-in-a-workqueue.patch \
+    file://wireless-rtl8723cs/8723cs-Port-to-5.11.patch \
+    file://wireless-rtl8723cs/8723cs-Enable-WoWLAN.patch \
+    file://wireless-rtl8723cs/8723cs-Port-to-5.12.patch \
+    file://wireless-rtl8723cs/8723cs-Fix-misleading-indentation.patch \
+    file://wireless-rtl8723cs/8723cs-Disable-use-of-NAPI.patch \
+    file://wireless-rtl8723cs/8723cs-Fix-indentation.patch \
+    file://wireless-rtl8723cs/8723cs-Fix-compile-warnings.patch \
+    file://wireless-rtl8723cs/8723cs-Port-to-5.15.patch \
 "
 
+
+do_configure:append:ty33a-8g1g() {
+    # Wire up drivers/staging/rtl8723cs in the Makefile if missing
+    if ! grep -qE '^obj-\$\((CONFIG_RTL8723CS)\)[[:space:]]*\+=\s*rtl8723cs/' \
+        ${S}/drivers/staging/Makefile; then
+        # Insert just after the existing rtl8723bs line for stability
+        sed -i '/^obj-\$(CONFIG_RTL8723BS)[[:space:]]*+=\s*rtl8723bs\//a obj-$(CONFIG_RTL8723CS)        += rtl8723cs/' \
+            ${S}/drivers/staging/Makefile
+    fi
+}
 
 BALENA_CONFIGS:append = " axp_power"
 BALENA_CONFIGS_DEPS[axp_power] = "\
@@ -31,15 +62,31 @@ BALENA_CONFIGS[axp_power] ="\
     CONFIG_AXP20X_POWER=y \
 "
 
+# Enable RTL8723CS in the kernel
+BALENA_CONFIGS:append:ty33a-8g1g = " rtl8723cs"
+
+# Staging needs to be on for the menu to show up
+BALENA_CONFIGS_DEPS[rtl8723cs] = " \
+    CONFIG_STAGING=y \
+"
+
+# Build the driver as a module
+BALENA_CONFIGS[rtl8723cs] = " \
+    CONFIG_RTL8723CS=m \
+"
+
+
 BALENA_CONFIGS:append:orangepi-plus2 = " wifi"
 BALENA_CONFIGS:append:orange-pi-zero = " wifi"
 BALENA_CONFIGS:append:orange-pi-lite = " wifi"
 BALENA_CONFIGS:append:nanopi-neo-air = " wifi"
 BALENA_CONFIGS:append:bananapi-m1-plus = " wifi"
-BALENA_CONFIGS:append:ty33a-8g1g= " wifi"
+BALENA_CONFIGS:append:ty33a-8g1g= " wifi initramfs"
 
-
-
+BALENA_CONFIGS[initramfs] = "\
+    CONFIG_BLK_DEV_RAM=y \
+    CONFIG_BLK_DEV_INITRD=y \
+"
 
 KERNEL_DEVICETREE_ty33a-8g1g = "sun8i-a33-ty33a-8g1g.dtb"
 

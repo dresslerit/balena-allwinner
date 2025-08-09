@@ -7,13 +7,32 @@ IMAGE_FSTYPES:append:ty33a-8g1g = " balenaos-img"
 # Customize balenaos-img
 BALENA_IMAGE_BOOTLOADER:ty33a-8g1g= "u-boot"
 BALENA_BOOT_PARTITION_FILES:ty33a-8g1g = " \
-    ${KERNEL_IMAGETYPE}:/${KERNEL_IMAGETYPE} \
+    ${KERNEL_IMAGETYPE}${KERNEL_INITRAMFS}-${MACHINE}.bin:/${KERNEL_IMAGETYPE} \
     ${KERNEL_DEVICETREE}:/dtb/${KERNEL_DEVICETREE} \
     u-boot-sunxi-with-spl.bin: \
 "
-IMAGE_CMD_balenaos-img:ty33a-8g1g() {
+IMAGE_CMD_balenaos-img:append:ty33a-8g1g() {
+    echo "=== TY33A IMAGE_CMD_balenaos-img EXECUTING ==="
+    echo "DEPLOY_DIR_IMAGE: ${DEPLOY_DIR_IMAGE}"
+    echo "BALENA_RAW_IMG: ${BALENA_RAW_IMG}"
+    ls -la "${DEPLOY_DIR_IMAGE}/u-boot-sunxi-with-spl.bin" || echo "ERROR: u-boot-sunxi-with-spl.bin not found"
+    
     # ty33a-8g1g needs uboot written at a specific location
+    echo "Running: dd if=${DEPLOY_DIR_IMAGE}/u-boot-sunxi-with-spl.bin of=${BALENA_RAW_IMG} conv=notrunc seek=8 bs=1024"
     dd if=${DEPLOY_DIR_IMAGE}/u-boot-sunxi-with-spl.bin of=${BALENA_RAW_IMG} conv=notrunc seek=8 bs=1024
+    echo "=== TY33A IMAGE_CMD_balenaos-img COMPLETED ==="
+}
+
+device_specific_configuration:ty33a-8g1g() {
+    echo "=== TY33A DEVICE SPECIFIC CONFIGURATION ==="
+    echo "DEPLOY_DIR_IMAGE: ${DEPLOY_DIR_IMAGE}"
+    echo "BALENA_RAW_IMG: ${BALENA_RAW_IMG}"
+    ls -la "${DEPLOY_DIR_IMAGE}/u-boot-sunxi-with-spl.bin" || echo "ERROR: u-boot-sunxi-with-spl.bin not found"
+    
+    # ty33a-8g1g needs uboot written at a specific location
+    echo "Running: dd if=${DEPLOY_DIR_IMAGE}/u-boot-sunxi-with-spl.bin of=${BALENA_RAW_IMG} conv=notrunc seek=8 bs=1024"
+    dd if=${DEPLOY_DIR_IMAGE}/u-boot-sunxi-with-spl.bin of=${BALENA_RAW_IMG} conv=notrunc seek=8 bs=1024
+    echo "=== TY33A DEVICE SPECIFIC CONFIGURATION COMPLETED ==="
 }
 
 
