@@ -21,7 +21,7 @@
 
 	chosen { 
 		stdout-path = "serial0:115200n8"; 
-		bootargs = "console=ttyS0,115200 console=tty0 fbcon=rotate:0";
+		bootargs = "console=tty1 console=ttyS0,115200 console=tty0 fbcon=rotate:0";
 	};	/* ---------- simplefb handoff placeholders (U-Boot will 'okay' one) --- */
 	display: framebuffer@0 {
 		compatible = "allwinner,simple-framebuffer", "simple-framebuffer";
@@ -97,8 +97,27 @@
 
 /* ---------------- Per-IP enabling ---------------------------------------- */
 &uart0   { status = "okay"; };
-&usb_otg { dr_mode = "peripheral"; status = "okay"; };
-&usbphy  { status = "okay"; usb1_vbus-supply = <&vcc5v0>; };
+
+&ehci0 {
+    status = "okay";
+};
+
+&ohci0 {
+    status = "okay";
+};
+
+&usb_otg {
+    dr_mode = "otg";
+    status = "okay";
+};
+
+&usbphy {
+    usb1_vbus-supply = <&reg_vcc5v0>;
+
+    usb0_vbus-supply = <&reg_drivevbus>;
+    status = "okay";
+};
+
 &drc0    { status = "okay"; };
 &fe0     { status = "okay"; };
 

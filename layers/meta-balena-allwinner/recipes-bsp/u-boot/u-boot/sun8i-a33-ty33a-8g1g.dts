@@ -93,7 +93,6 @@
 /* --------------------------------------------------------------------- */
 
 &pio {
-	/* LVDS pins for TCON0 */
 	lvds0_pins: lvds0-pins {
 		pins = "PD0","PD1","PD2","PD3","PD4","PD5","PD6","PD7",
 		       "PD8","PD9","PD10","PD11","PD12","PD13","PD14",
@@ -250,6 +249,14 @@
 /* --------------------------------------------------------------------- */
 /* USB                                                                   */
 
+&ehci0 {
+    status = "okay";
+};
+
+&ohci0 {
+    status = "okay";
+};
+
 &usb_otg {
 	dr_mode = "peripheral";
 	status = "okay";
@@ -257,9 +264,8 @@
 };
 
 &usbphy {
-	usb0_id_det-gpios      = <&pio 7 8 GPIO_ACTIVE_HIGH>; /* PH8 */
-	usb0_vbus_power-supply = <&usb_power_supply>;
-	usb0_vbus-supply       = <&reg_drivevbus>;
-	usb1_vbus-supply       = <&reg_vcc5v0>;
-	status = "okay";
+    usb1_vbus-supply = <&reg_vcc5v0>;
+
+    usb0_vbus-supply = <&reg_drivevbus>;
+    status = "okay";
 };
