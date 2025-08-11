@@ -18,7 +18,7 @@
 
 	chosen { stdout-path = "serial0:115200n8"; };
 
-	/* 5‑V rail for USB‑A port */
+	/* 5-V rail for USB-A port */
 	reg_vcc5v0: vcc5v0 {
 		compatible = "regulator-fixed";
 		regulator-name = "vcc5v0";
@@ -27,11 +27,11 @@
 		regulator-always-on;
 	};
 
-	/* Wi‑Fi / BT reset (PL7) */
+	/* Wi-Fi / BT reset (PL7) */
 	wifi_pwrseq: wifi_pwrseq {
 		compatible = "mmc-pwrseq-simple";
 		reset-gpios = <&r_pio 0 7 GPIO_ACTIVE_LOW>; /* PL7 */
-		post-power-on-delay-ms = <200>;   /* Some Realtek modules need up to 200ms before SDIO responds */
+		post-power-on-delay-ms = <200>;
 	};
 
 	leds {
@@ -49,11 +49,64 @@
 			linux,default-trigger = "phy0tx";
 		};
 	};
+
+	/* ---------- LVDS panel (Samsung LTN154AT12) ---------- */
+	panel_lvds: panel-lvds@0 {
+		compatible    = "panel-lvds";
+		/* If your axp223 label is reg_dc1sw you can wire it:
+		 * power-supply = <&reg_dc1sw>;
+		 */
+		backlight     = <&backlight>;
+		data-mapping  = "jeida-18";
+		bpc           = <6>;
+		width-mm      = <331>;
+		height-mm     = <207>;
+
+		panel-timing {
+			clock-frequency = <68544000>;
+			hactive = <1280>; vactive = <800>;
+			hfront-porch = <24>;  hback-porch = <64>;  hsync-len = <32>;
+			vfront-porch = <3>;   vback-porch = <7>;   vsync-len = <6>;
+			de-active       = <1>;
+			hsync-active    = <0>;
+			vsync-active    = <0>;
+			pixelclk-active = <0>;
+		};
+
+		port {
+			panel_lvds_in: endpoint {
+				remote-endpoint = <&tcon0_out_lvds>;
+			};
+		};
+	};
+
+	/* ---------- PWM/GPIO backlight ---------- */
+	backlight: backlight {
+		compatible          = "pwm-backlight";
+		pwms                = <&pwm 0 20000 1>;     /* PH0 → PWM0, inverted (1==INVERTED in U-Boot) */
+		enable-gpios        = <&pio 7 6 GPIO_ACTIVE_HIGH>; /* PH6 */
+		brightness-levels   = <0 25 50 75 100 130 160 200 255>;
+		default-brightness-level = <6>;
+	};
 };
 
 /* --------------------------------------------------------------------- */
 
 &pio {
+	/* LVDS pins for TCON0 */
+	lvds0_pins: lvds0-pins {
+		pins = "PD0","PD1","PD2","PD3","PD4","PD5","PD6","PD7",
+		       "PD8","PD9","PD10","PD11","PD12","PD13","PD14",
+		       "PD15","PD16","PD17","PD18","PD19","PD20","PD21",
+		       "PD22","PD23","PD24","PD25","PD26","PD27";
+		function = "lvds0";
+	};
+
+	bl_en_pin: bl-en-pin {
+		pins = "PH6";
+		function = "gpio_out";
+	};
+
 	mmc0_pins: mmc0-pins {
 		pins = "PF0","PF1","PF2","PF3","PF4","PF5";
 		function = "mmc0";
@@ -79,7 +132,7 @@
 
 &cpu0 { cpu-supply = <&reg_dcdc3>; };
 
-/* PMIC on the R‑RSB bus */
+/* PMIC on the R-RSB bus */
 &r_rsb {
 	status = "okay";
 
@@ -111,7 +164,7 @@
 /* --------------------------------------------------------------------- */
 /* Storage                                                               */
 
-&mmc0 { /* eMMC on PF0-PF5 */
+&mmc0 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&mmc0_pins>;
 	vmmc-supply = <&reg_dcdc1>;
@@ -120,7 +173,7 @@
 	status = "okay";
 };
 
-&mmc1 { /* µSD on PG0-PG5 */
+&mmc1 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&mmc1_pins &mmc1_cd_pin>;
 	vmmc-supply = <&reg_dcdc1>;
@@ -129,7 +182,7 @@
 	status = "okay";
 };
 
-&mmc2 { /* Wi‑Fi (RTL8723CS) on PC pins */
+&mmc2 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&mmc2_pins>;
 	vmmc-supply = <&reg_aldo1>;
@@ -141,20 +194,71 @@
 };
 
 /* --------------------------------------------------------------------- */
+/* Display engine / TCON / routing                                       */
+
+&de    { status = "okay"; };
+&be0   { status = "okay"; };
+
+&be0_out {
+	remote-endpoint = <&tcon0_in_be0>;
+};
+
+&tcon0 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&lvds0_pins>;
+
+	/* Supplies (present in U-Boot DT); optional but nice to have */
+	vdd-lcd-supply  = <&reg_dcdc1>;
+	vcc-lvds-supply = <&reg_aldo1>;
+
+	ports {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		port@0 {
+			reg = <0>;
+			tcon0_in_be0: endpoint { remote-endpoint = <&be0_out>; };
+		};
+
+		port@1 {
+			reg = <1>;
+			tcon0_out_lvds: endpoint {
+				allwinner,tcon-channel = <0>;
+				remote-endpoint = <&panel_lvds_in>;
+			};
+		};
+	};
+};
+
+/* --------------------------------------------------------------------- */
+/* PWM for backlight                                                     */
+
+&pwm {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pwm0_pins>;
+	status = "okay";
+};
+
+/* --------------------------------------------------------------------- */
 /* UARTs                                                                 */
 
-&uart0 { status = "okay"; };  /* debug console */
+&uart0 { status = "okay"; };
 &uart1 { status = "disabled"; };
 &uart2 { status = "okay"; };
 
 /* --------------------------------------------------------------------- */
 /* USB                                                                   */
 
-&usb_otg { dr_mode = "otg"; status = "okay"; };
+&usb_otg {
+	dr_mode = "peripheral";
+	status = "okay";
+	gadget = "serial";
+};
 
 &usbphy {
 	usb0_id_det-gpios      = <&pio 7 8 GPIO_ACTIVE_HIGH>; /* PH8 */
-	usb0_vbus_power-supply = <&usb_power_supply>; /* label from axp22x.dtsi */
+	usb0_vbus_power-supply = <&usb_power_supply>;
 	usb0_vbus-supply       = <&reg_drivevbus>;
 	usb1_vbus-supply       = <&reg_vcc5v0>;
 	status = "okay";

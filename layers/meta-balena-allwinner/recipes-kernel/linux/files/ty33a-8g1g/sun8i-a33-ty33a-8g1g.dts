@@ -16,9 +16,27 @@
 		mmc1    = &mmc1;
 		mmc2    = &mmc2;
 		usb-power-supply = &vcc5v0;
+		display0 = &display;
 	};
 
-	chosen { stdout-path = "serial0:115200n8"; };
+	chosen { 
+		stdout-path = "serial0:115200n8"; 
+		bootargs = "console=ttyS0,115200 console=tty0 fbcon=rotate:0";
+	};	/* ---------- simplefb handoff placeholders (U-Boot will 'okay' one) --- */
+	display: framebuffer@0 {
+		compatible = "allwinner,simple-framebuffer", "simple-framebuffer";
+		allwinner,pipeline = "de_be0-lcd0";
+		clocks = <&ccu CLK_BUS_LCD>, <&ccu CLK_BUS_DE_BE>, <&ccu CLK_LCD_CH0>,
+			 <&ccu CLK_DE_BE>, <&ccu CLK_DRAM_DE_BE>;
+		status = "disabled";
+	};
+
+	/* Keep a mixer path too; harmless if your SoC/DT doesn’t expose it */
+	framebuffer@1 {
+		compatible = "allwinner,simple-framebuffer", "simple-framebuffer";
+		allwinner,pipeline = "mixer0-lcd0";
+		status = "disabled";
+	};
 
 	vcc5v0: vcc5v0 {
 		compatible = "regulator-fixed";
@@ -70,7 +88,7 @@
 		enable-gpios        = <&pio 7 6 GPIO_ACTIVE_HIGH>;          /* PH6 */
 		power-supply        = <&reg_dc1sw>;
 		brightness-levels   = <0 25 50 75 100 130 160 200 255>;
-		default-brightness-level = <8>;
+		default-brightness-level = <6>;
 		default-state       = "on";
 		pinctrl-names       = "default";
 		pinctrl-0           = <&bl_en_pin>;
@@ -101,7 +119,6 @@
 	vqmmc-supply   = <&reg_dldo1>;
 	bus-width      = <4>;
 	cd-gpios       = <&pio 1 4 GPIO_ACTIVE_LOW>;  /* PB4 */
-	// cd-inverted;
 	status = "okay";
 };
 
@@ -168,7 +185,6 @@
 
 &reg_dc1sw {
 	regulator-name = "vcc-lcd";
-	/* FIX: Ensure this regulator is enabled at boot */
 	regulator-always-on;
 };
 
@@ -228,7 +244,6 @@
 &pio {
 	status = "okay";
 
-	/* FIX: Add the missing LVDS pin definitions */
 	lvds0_pins: lvds0_pins {
 		pins = "PD0", "PD1", "PD2", "PD3", "PD4", "PD5", "PD6", "PD7",
 		       "PD8", "PD9", "PD10", "PD11", "PD12", "PD13", "PD14",
@@ -259,7 +274,6 @@
 
 &tcon0 {
 	status          = "okay";
-	/* FIX: Add pinctrl handle to route signals to pins */
 	pinctrl-names   = "default";
 	pinctrl-0       = <&lvds0_pins>;
 	vdd-lcd-supply  = <&reg_dcdc1>;
