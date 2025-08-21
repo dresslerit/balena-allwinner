@@ -1,4 +1,3 @@
+FILESEXTRAPATHS:append := "${THISDIR}/${PN}"
 
-FILESEXTRAPATHS:prepend:nanopi-neo-air := "${THISDIR}/files:"
-
-RDEPENDS:${PN}:append = " kmod"
+RDEPENDS:${PN} += "mmc-utils"
