@@ -17,6 +17,8 @@
 		mmc2    = &mmc2;
 		usb-power-supply = &reg_vcc5v0;
 		display0 = &display;
+		/* Allow U-Boot to set MAC address for RTL8723CS (no eeprom) */
+		ethernet0 = &rtl8723cs;
 	};
 
 	chosen { 
@@ -162,6 +164,11 @@
 	cap-sdio-irq;
 	keep-power-in-suspend;
 	status = "okay";
+
+	rtl8723cs: wifi@1 {
+		reg = <1>;
+		compatible = "realtek,rtl8723cs-wlan";
+	};
 };
 
 &mmc2 {
