@@ -55,14 +55,14 @@ cat /sys/module/8723cs/parameters/rtw_ips_mode    # Should be 0
 cat /sys/module/8723cs/parameters/rtw_btcoex_enable
 
 # Check interface power save status
-iwconfig wlan0  # Power Management should be "off"
+iw dev wlan0 get power_save  # Should show "Power save: off"
 ```
 
 #### 2. Monitor Signal and Connection Quality
 
 ```bash
 # Real-time signal monitoring
-watch -n1 'iw dev wlan0 link; iwconfig wlan0'
+watch -n1 'iw dev wlan0 link; iw dev wlan0 get power_save'
 
 # Detailed WiFi status
 nmcli -f all device show wlan0
@@ -93,7 +93,7 @@ journalctl -u NetworkManager --since "10 minutes ago" | grep -iE 'disconnect|dea
 iw dev wlan0 set power_save off
 
 # Verify it's disabled
-iwconfig wlan0
+iw dev wlan0 get power_save
 
 # If this improves connectivity, power save is the issue
 # Monitor connection stability for 5-10 minutes
@@ -210,17 +210,20 @@ backend=wpa_supplicant
 # Disable interface power save
 iw dev wlan0 set power_save off
 
-# Maximize TX power
-iwconfig wlan0 txpower auto
+# Note: TX power managed by driver/regulatory domain
+# Manual adjustment: iw dev wlan0 set txpower auto
 
 # Ensure driver power management is disabled
 echo 0 > /sys/module/8723cs/parameters/rtw_power_mgnt
 echo 0 > /sys/module/8723cs/parameters/rtw_ips_mode
 
-# Optimize kernel network stack
-sysctl -w net.ipv4.tcp_congestion_control=bbr
+# Optimize kernel network stack (if BBR available)
+sysctl -w net.ipv4.tcp_congestion_control=bbr 2>/dev/null || true
 sysctl -w net.core.rmem_max=16777216
 sysctl -w net.core.wmem_max=16777216
+
+# Increase WiFi retry limits
+iw dev wlan0 set retry short 7 long 4 2>/dev/null || true
 ```
 
 ### 5. Integrated Tuning Package
@@ -257,7 +260,7 @@ grep -A5 '^\[wifi\]' /etc/NetworkManager/NetworkManager.conf
 systemctl status rtl8723cs-wifi-tune.service
 
 # 5. Check interface power save is off
-iwconfig wlan0 | grep "Power Management"
+iw dev wlan0 get power_save  # Should show "Power save: off"
 ```
 
 ### 3. Connectivity Testing
@@ -292,7 +295,9 @@ grep 'packet loss' /tmp/ping_results.txt
 
 ```bash
 # On device, test with increased TX power
-iwconfig wlan0 txpower 20dBm  # or specific value
+iw dev wlan0 set txpower fixed 2000  # 20dBm in mBm (millidBm)
+# Or set to automatic:
+iw dev wlan0 set txpower auto
 ```
 
 ### Option 2: Disable BT Coexistence (if using Bluetooth)
