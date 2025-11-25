@@ -2,7 +2,7 @@
 
 ## Problem Summary
 
-TY33A boards with RTL8723CS WiFi chipset fail to connect or lose connection when WiFi signal is medium/weak (e.g., signal strength ~54%).
+TY33A boards with RTL8723CS WiFi chipset fail to connect or lose connection when WiFi signal is medium/weak (e.g., signal strength ~54%). Device can spontaneously disconnect even with 50%+ signal strength and fail to reconnect for 60-80 seconds.
 
 ## Root Causes Identified
 
@@ -31,13 +31,28 @@ options 8723cs rtw_power_mgnt=0 rtw_ips_mode=0 rtw_btcoex_enable=0
 
 **Impact**: Even if kernel config is correct, runtime power management wasn't disabled.
 
-### 3. **Insufficient NetworkManager Tuning**
+### 3. **Background Scan Signal Monitoring Failure**
 
-NetworkManager lacked WiFi-specific optimizations for weak signal scenarios:
+wpa_supplicant's background scanning feature fails with:
+```
+bgscan simple: Failed to enable signal strength monitoring
+```
 
-- No DHCP timeout adjustments
-- Default power save settings
-- No explicit weak signal handling
+**Impact**: The driver cannot properly monitor signal strength for roaming decisions, leading to:
+- Delayed detection of degraded link quality
+- Inability to proactively switch to better APs
+- Connection drops when signal degrades below threshold
+
+### 4. **Invalid NetworkManager Configuration**
+
+NetworkManager 1.46.0 logs show unknown configuration keys:
+```
+<warn>  config: unknown key 'powersave' in section [wifi]
+<warn>  config: unknown key 'scan-rand-mac-address' in section [wifi]
+<warn>  config: unknown key 'backend' in section [wifi]
+```
+
+**Impact**: WiFi power management settings were ignored, causing NetworkManager to use default behavior that doesn't optimize for weak signals.
 
 ## Debugging Guide
 
@@ -84,9 +99,31 @@ journalctl -u NetworkManager -f
 
 # Check for disconnection events
 journalctl -u NetworkManager --since "10 minutes ago" | grep -iE 'disconnect|deauth|signal'
+
+# Check for NetworkManager configuration warnings
+journalctl -u NetworkManager -b | grep 'unknown key'
+# If you see warnings like "unknown key 'powersave' in section [wifi]", 
+# the configuration syntax is incorrect for this NetworkManager version
 ```
 
-#### 4. Test Power Save Modes
+#### 4. Verify NetworkManager Configuration
+
+```bash
+# Check current NetworkManager configuration
+cat /etc/NetworkManager/NetworkManager.conf
+
+# Verify no configuration warnings at boot
+journalctl -u NetworkManager -b | grep -i warn
+
+# The configuration should have valid keys:
+# [device]
+#   wifi.scan-rand-mac-address=no
+# [connection]
+#   wifi.powersave=2
+#   ipv4.dhcp-timeout=90
+```
+
+#### 5. Test Power Save Modes
 
 ```bash
 # Temporarily disable power save
@@ -99,7 +136,7 @@ iw dev wlan0 get power_save
 # Monitor connection stability for 5-10 minutes
 ```
 
-#### 5. Check Module Load Parameters
+#### 6. Check Module Load Parameters
 
 ```bash
 # Verify modprobe configuration is loaded
@@ -109,7 +146,7 @@ modprobe -c | grep 8723cs
 # options 8723cs rtw_power_mgnt=0 rtw_ips_mode=0 rtw_btcoex_enable=0
 ```
 
-#### 6. Network Performance Testing
+#### 7. Network Performance Testing
 
 ```bash
 # Test with different signal levels
@@ -169,20 +206,33 @@ do_install:append:ty33a-8g1g() {
 
 **Effect**: Modprobe configuration is now installed to `/etc/modprobe.d/8723cs.conf`, ensuring power management is disabled even if driver defaults change.
 
-### 3. Enhanced NetworkManager Configuration
+### 3. Fixed NetworkManager Configuration
 
 **File**: `layers/meta-balena-allwinner/recipes-connectivity/networkanager/networkmanager_%.bbappend`
 
-**Added**:
-
+**Previous Configuration** (INVALID):
 ```ini
+[wifi]
+powersave=2  # INVALID KEY - caused warnings
+scan-rand-mac-address=no  # INVALID KEY
+backend=wpa_supplicant  # INVALID KEY
+```
+
+**Fixed Configuration**:
+```ini
+[device]
+wifi.scan-rand-mac-address=no
+
 [connection]
 ipv4.dhcp-timeout=90
 ipv6.dhcp-timeout=90
+wifi.powersave=2  # 0=default, 2=on (hardware PS), 3=off
+```
 
-[wifi]
-powersave=2  # 0=default, 1=ignore, 2=disable, 3=enable
-scan-rand-mac-address=no
+**Effect**: 
+- Eliminates NetworkManager warning logs
+- Properly configures WiFi power management via valid settings
+- Increases DHCP timeout to 90 seconds for weak signal scenarios
 backend=wpa_supplicant
 ```
 
