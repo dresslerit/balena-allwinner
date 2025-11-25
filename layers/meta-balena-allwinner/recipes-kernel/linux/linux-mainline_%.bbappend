@@ -23,7 +23,6 @@ SRC_URI:append:ty33a-8g1g = " \
     file://wireless-rtl8723cs/8723cs-Enable-monitor-mode.patch \
     file://wireless-rtl8723cs/8723cs-Disable-power-saving.patch \
     file://wireless-rtl8723cs/8723cs-aes_encrypt-aes_encrypt_128-to-avoid-symbol-name-conflic.patch \
-    file://wireless-rtl8723cs/8723cs-Enable-wifi-power-saving-mode.patch \
     file://wireless-rtl8723cs/8723cs-Enable-TDLS-802.11z-support-direct-sta-sta-connection.patch \
     file://wireless-rtl8723cs/8723cs-Disable-CONFIG_CONCURRENT_MODE.patch \
     file://wireless-rtl8723cs/8723cs-Set-CONFIG_RTW_SDIO_PM_KEEP_POWER-n-to-fix-suspend-38.patch \
@@ -36,6 +35,7 @@ SRC_URI:append:ty33a-8g1g = " \
     file://wireless-rtl8723cs/8723cs-Fix-indentation.patch \
     file://wireless-rtl8723cs/8723cs-Fix-compile-warnings.patch \
     file://wireless-rtl8723cs/8723cs-Port-to-5.15.patch \
+    file://wireless-rtl8723cs/8723cs.conf \
 "
 
 
@@ -48,6 +48,14 @@ do_configure:append:ty33a-8g1g() {
             ${S}/drivers/staging/Makefile
     fi
 }
+
+do_install:append:ty33a-8g1g() {
+    # Install modprobe configuration to disable power management for RTL8723CS
+    install -d ${D}${sysconfdir}/modprobe.d
+    install -m 0644 ${WORKDIR}/wireless-rtl8723cs/8723cs.conf ${D}${sysconfdir}/modprobe.d/
+}
+
+FILES:${PN}:append:ty33a-8g1g = " ${sysconfdir}/modprobe.d/8723cs.conf"
 
 BALENA_CONFIGS:append = " axp_power"
 BALENA_CONFIGS_DEPS[axp_power] = "\

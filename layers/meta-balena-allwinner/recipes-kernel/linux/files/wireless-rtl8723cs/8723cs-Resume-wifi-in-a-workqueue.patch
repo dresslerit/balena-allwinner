@@ -14,10 +14,9 @@ diff --git a/drivers/staging/rtl8723cs/Makefile b/drivers/staging/rtl8723cs/Make
 index 0fe39a873866..60c1c864db42 100644
 --- a/drivers/staging/rtl8723cs/Makefile
 +++ b/drivers/staging/rtl8723cs/Makefile
-@@ -1333,6 +1333,7 @@ ifeq ($(CONFIG_PLATFORM_I386_PC), y)
+@@ -1333,5 +1333,6 @@ ifeq ($(CONFIG_PLATFORM_I386_PC), y)
  EXTRA_CFLAGS += -DCONFIG_LITTLE_ENDIAN
  EXTRA_CFLAGS += -DCONFIG_IOCTL_CFG80211 -DRTW_USE_CFG80211_STA_EVENT
- EXTRA_CFLAGS += -DCONFIG_RTW_80211R
 +EXTRA_CFLAGS += -DCONFIG_RESUME_IN_WORKQUEUE
  
  SUBARCH := $(shell uname -m | sed -e s/i.86/i386/)

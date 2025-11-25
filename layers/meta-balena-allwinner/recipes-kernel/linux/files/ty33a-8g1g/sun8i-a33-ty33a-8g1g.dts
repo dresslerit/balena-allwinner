@@ -89,7 +89,7 @@
 };
 
 
-/* ---------------- CPUs ---------------------------------------- */
+/* ---------------- CPUs - Fixed 1200MHz ----------------------- */
 
 &cpu0 {
 	clock-frequency = <1200000000>;
@@ -163,6 +163,10 @@
 	non-removable;
 	cap-sdio-irq;
 	keep-power-in-suspend;
+	/* WiFi performance optimizations */
+	sd-uhs-sdr50;              /* Enable high-speed SDR50 mode */
+	max-frequency = <50000000>; /* 50MHz for better throughput */
+	no-sdio-pm;                 /* Disable SDIO power management for performance */
 	status = "okay";
 
 	rtl8723cs: wifi@1 {
@@ -273,6 +277,10 @@
 &reg_drivevbus {
 	regulator-name = "usb0-vbus";
 	status = "okay";
+};
+
+&reg_rtc_ldo {
+	regulator-name = "vcc-rtc";
 };
 
 &reg_rtc_ldo {

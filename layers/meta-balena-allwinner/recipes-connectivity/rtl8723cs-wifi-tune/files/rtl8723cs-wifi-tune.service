@@ -1,0 +1,14 @@
+[Unit]
+Description=RTL8723CS WiFi Tuning for Weak Signals
+After=network.target sys-subsystem-net-devices-wlan0.device
+BindsTo=sys-subsystem-net-devices-wlan0.device
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/sbin/rtl8723cs-wifi-tune.sh
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
