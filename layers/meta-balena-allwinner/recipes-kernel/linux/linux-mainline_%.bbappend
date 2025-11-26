@@ -201,3 +201,9 @@ do_configure:prepend:ty33a-8g1g() {
     fi
 }
 
+do_install:append:ty33a-8g1g() {
+    # Install module configuration for 8723cs driver
+    install -d ${D}${sysconfdir}/modprobe.d
+    install -m 0644 ${WORKDIR}/wireless-rtl8723cs/8723cs.conf ${D}${sysconfdir}/modprobe.d/
+}
+

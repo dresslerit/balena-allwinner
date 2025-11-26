@@ -1,19 +1,20 @@
 [Unit]
-Description=RTL8723CS WiFi Tuning for Weak Signals
-After=network.target sys-subsystem-net-devices-wlan0.device
-BindsTo=sys-subsystem-net-devices-wlan0.device
-Before=NetworkManager.service wpa_supplicant.service
-StartLimitBurst=5
-StartLimitIntervalSec=60
+Description=RTL8723CS WiFi Interface Tuning (Runtime Settings)
+Documentation=man:iw(8) man:iwconfig(8)
+After=NetworkManager.service sys-subsystem-net-devices-wlan0.device
+Wants=sys-subsystem-net-devices-wlan0.device
+# Only run after NetworkManager has brought up the interface
+Requisite=sys-subsystem-net-devices-wlan0.device
+StartLimitBurst=3
+StartLimitIntervalSec=120
 
 [Service]
 Type=oneshot
 RemainAfterExit=yes
 ExecStart=/usr/sbin/rtl8723cs-wifi-tune.sh
 
-# Add recovery on failure
-Restart=on-failure
-RestartSec=5
+# No restart needed for oneshot
+Restart=no
 
 [Install]
 WantedBy=multi-user.target

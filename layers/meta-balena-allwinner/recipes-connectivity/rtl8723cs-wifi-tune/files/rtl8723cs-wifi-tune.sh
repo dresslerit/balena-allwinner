@@ -47,16 +47,13 @@ fi
 
 # Adjust WiFi retry parameters if available
 if [ -d "/sys/module/8723cs/parameters" ]; then
-    # These settings improve reliability on weak signals
-    
-    # Ensure power management is disabled
-    echo 0 > /sys/module/8723cs/parameters/rtw_power_mgnt 2>/dev/null || true
-    echo 0 > /sys/module/8723cs/parameters/rtw_ips_mode 2>/dev/null || true
-    
-    # Disable BT coexistence to prevent interference if not needed
-    echo 0 > /sys/module/8723cs/parameters/rtw_btcoex_enable 2>/dev/null || true
-    
-    log "RTL8723CS driver parameters tuned (Power Mgmt: 0, IPS: 0, BT Coex: 0)"
+    # Log current driver module parameters for diagnostics
+    log "Current RTL8723CS driver parameters:"
+    for param in rtw_power_mgnt rtw_ips_mode rtw_btcoex_enable rtw_check_hw_status rtw_tx_pwr_lmt_enable rtw_adaptivity_en rtw_ampdu_enable; do
+        if [ -f "/sys/module/8723cs/parameters/$param" ]; then
+            log "  $param = $(cat /sys/module/8723cs/parameters/$param 2>/dev/null || echo 'N/A')"
+        fi
+    done
 fi
 
 # Optimize kernel network stack for WiFi (BBR handles packet loss better)
