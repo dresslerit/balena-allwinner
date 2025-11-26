@@ -24,3 +24,4 @@ do_install() {
 
 FILES:${PN} += "${systemd_unitdir}/system/rtl8723cs-wifi-tune.service"
 FILES:${PN} += "${sbindir}/rtl8723cs-wifi-tune.sh"
+FILES:${PN} += "${sysconfdir}/modprobe.d/8723cs.conf"

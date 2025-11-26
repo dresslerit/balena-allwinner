@@ -4,6 +4,7 @@
 
 IMAGE_FSTYPES:append:ty33a-8g1g = " balenaos-img"
 IMAGE_INSTALL:append:ty33a-8g1g = " libdrm-tests"
+IMAGE_INSTALL:append:ty33a-8g1g = " wifi-recovery"
 
 # Customize balenaos-img
 BALENA_IMAGE_BOOTLOADER:ty33a-8g1g= "u-boot"

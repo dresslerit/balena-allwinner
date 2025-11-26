@@ -1,0 +1,16 @@
+[Unit]
+Description=WiFi Connection Recovery Service
+After=NetworkManager.service
+Requires=NetworkManager.service
+BindsTo=sys-subsystem-net-devices-wlan0.device
+
+[Service]
+Type=simple
+ExecStart=/usr/sbin/wifi-recovery.sh
+Restart=always
+RestartSec=30
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

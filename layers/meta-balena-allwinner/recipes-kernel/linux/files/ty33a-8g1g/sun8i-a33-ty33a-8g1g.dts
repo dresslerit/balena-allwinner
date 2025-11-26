@@ -269,7 +269,7 @@
 &reg_dldo1 {
 	regulator-name = "vcc-mmc";
 	regulator-min-microvolt = <3300000>;
-	regulator-max-microvolt = <3300000>;
+	regulator-max-microvolt = <3400000>;  /* Increased from 3300000 for better WiFi performance */
 	regulator-boot-on;
 	regulator-always-on;
 };
@@ -297,6 +297,14 @@
 
 	vcc-pb-supply = <&reg_dldo1>;
 	vcc-ph-supply = <&reg_dldo1>;
+
+	/* Ensure max drive strength for WiFi SDIO bus */
+	mmc1_pg_pins: mmc1-pg-pins {
+		pins = "PG0", "PG1", "PG2", "PG3", "PG4", "PG5";
+		function = "mmc1";
+		drive-strength = <30>;
+		bias-pull-up;
+	};
 
 	/* Replace your old lvds0_pins node with this corrected version */
 	lvds0_pins: lvds0_pins {
